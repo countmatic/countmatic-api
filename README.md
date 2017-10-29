@@ -1,5 +1,5 @@
 # openapi
-Open API description of the countmatic backend
+Open API description of the countmatic backend. Follow us also on twitter: https://twitter.com/countmatic
 
 ## Request a new counter
 ```
