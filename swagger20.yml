@@ -1,0 +1,310 @@
+swagger: "2.0"
+info:
+  description: "countmatic is a service to provide counters as web service. Sure, counters are simple artefacts of IT systems. But they are part of *every* system. There are numerous use cases where you need distributed counters in IoT manufactoring or production reporting.    Find out more [https://countmatic.io](https://countmatic.io)"
+  version: "0.9.0"
+  title: "countmatic api"
+  termsOfService: "https://countmatic.io#terms"
+  contact:
+    email: "countmaster@countmatic.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "api.countmatic.io"
+basePath: "/v1"
+tags:
+- name: "counter"
+  description: "Everything about your counters"
+  externalDocs:
+    description: "Find out more"
+    url: "http://countmatic.io"
+- name: "group"
+  description: "About groups of counters"
+- name: "stats"
+  description: "Statistics on counters"
+schemes:
+- "https"
+security:
+  - APIKeyHeader: []
+paths:
+  /counter/new:
+    get:
+      summary: Create new counter and retrieve an access token for it
+      operationId: getNewCounter
+      tags:
+        - counter
+      security: []
+      parameters:
+        - name: name
+          in: query
+          description: The name of the counter
+          required: true
+          type: string
+      produces: 
+        - application/json
+      responses:
+        200:
+          description: OK, counter created
+          schema:
+            $ref: "#/definitions/Token"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/add:
+    get:
+      summary: Add another counter for your access token, this makes it a so called "grouptoken"
+      operationId: addCounter
+      tags:
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: The name of the counter
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK, counter created and added
+          schema:
+            $ref: "#/definitions/Counter"
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/current:
+    get:
+      summary: Get current reading of the counters for that token
+      operationId: getCurrentReading
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: Optionally the name of the requested counter
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK, counter read
+          schema:
+            $ref: "#/definitions/Counters"
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/next:
+    get:
+      summary: Increment and get current reading of that counter
+      operationId: nextNumber
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: Optionally the name of the requested counter, mandatory for grouptokens
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK, counter incremented
+          schema:
+            $ref: "#/definitions/Counter"
+        400:
+          description: Got grouptoken without specified name
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/previous:
+    get:
+      summary: Decrement and get current reading of that counter
+      operationId: previousNumber
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: Optionally the name of the requested counter, mandatory for grouptokens
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK, counter decremented
+          schema:
+            $ref: "#/definitions/Counter"
+        400:
+          description: Got grouptoken without specified name
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/reset:
+    get:
+      summary: Reset that counter to 1
+      operationId: resetCounter
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: Optionally the name of the requested counter, mandatory for grouptokens
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK, counter reset
+          schema:
+            $ref: "#/definitions/Counter"
+        400:
+          description: Got grouptoken without specified name
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/delete:
+    get:
+      summary: Delete that counter without a trace
+      operationId: deleteCounter
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: Optionally the name of the requested counter, mandatory for grouptokens
+          required: false
+          type: string
+      responses:
+        200:
+          description: OK, counter deleted
+          schema:
+            $ref: "#/definitions/Counter"
+        400:
+          description: Got grouptoken without specified name
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /counter/readonly:
+    get:
+      summary: Request read-only access token for that token
+      operationId: getReadOnlyToken
+      tags: 
+        - counter
+      produces: 
+        - application/json
+      parameters: 
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+      responses:
+        200:
+          description: OK, read-only token created
+          schema:
+            $ref: "#/definitions/Token"
+        403:
+          description: Forbidden, action not allowed with that token
+        404:
+          description: Not Found, unknown token
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+securityDefinitions:
+  APIKeyHeader:
+    type: apiKey
+    in: header
+    name: token
+definitions:
+  Token:
+    properties:
+      token:
+        type: string
+  Counter:
+    properties:
+      name:
+        type: string
+      count:
+        type: integer
+        format: int64
+  Counters:
+    type: array
+    items:
+      $ref: "#/definitions/Counter"
+  Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
