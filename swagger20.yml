@@ -1,62 +1,75 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "countmatic is a service to provide counters as web service. Sure, counters are simple artefacts of IT systems. But they are part of *every* system. There are numerous use cases where you need distributed counters in IoT manufactoring or production reporting.    Find out more [https://countmatic.io](https://countmatic.io)"
-  version: "0.9.0"
-  title: "countmatic api"
-  termsOfService: "https://countmatic.io#terms"
+  description: >-
+    countmatic is a service to provide counters as web service. Sure, counters
+    are simple artefacts of IT systems. But they are part of *every* system.
+    There are numerous use cases where you need distributed enumerators in IoT
+    manufacturing or i.e. production reporting.    Find out more
+    [https://countmatic.io](https://countmatic.io).
+  version: 1.1.2
+  title: countmatic api
+  termsOfService: 'https://countmatic.io#terms'
   contact:
-    email: "countmaster@countmatic.io"
+    email: countmaster@countmatic.io
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "api.countmatic.io"
-basePath: "/v1"
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: api.countmatic.io
+basePath: /v1
 tags:
-- name: "counter"
-  description: "Everything about your counters"
-  externalDocs:
-    description: "Find out more"
-    url: "http://countmatic.io"
-- name: "group"
-  description: "About groups of counters"
-- name: "stats"
-  description: "Statistics on counters"
+  - name: counter
+    description: Everything about your counters
+    externalDocs:
+      description: Find out more
+      url: 'http://countmatic.io'
+  - name: group
+    description: About groups of counters
+  - name: stats
+    description: Statistics on counters
 schemes:
-- "https"
-security:
-  - APIKeyHeader: []
+  - https
 paths:
   /counter/new:
     get:
-      summary: Create new counter and retrieve an access token for it
+      summary: >-
+        Create new counter and retrieve an access token for it. All counters and
+        tokens have a default TTL of one week. That means, that all data is
+        removed automatically after one week of "uselessness".
       operationId: getNewCounter
       tags:
         - counter
-      security: []
       parameters:
         - name: name
           in: query
           description: The name of the counter
           required: true
           type: string
-      produces: 
+        - name: initialvalue
+          in: query
+          description: 'Initial value for the counter, default is 0'
+          required: false
+          type: integer
+          format: int64
+      produces:
         - application/json
       responses:
-        200:
-          description: OK, counter created
+        '200':
+          description: 'OK, counter created'
           schema:
-            $ref: "#/definitions/Token"
+            $ref: '#/definitions/Token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/add:
     get:
-      summary: Add another counter for your access token, this makes it a so called "grouptoken"
+      summary: >-
+        Add another counter for your access token, this makes it a so called
+        "grouptoken"
       operationId: addCounter
       tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -69,26 +82,32 @@ paths:
           description: The name of the counter
           required: true
           type: string
+        - name: initialvalue
+          in: query
+          description: 'Initial value for the counter, default is 0'
+          required: false
+          type: integer
+          format: int64
       responses:
-        200:
-          description: OK, counter created and added
+        '200':
+          description: 'OK, counter created and added to token'
           schema:
-            $ref: "#/definitions/Counter"
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+            $ref: '#/definitions/Counter'
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/current:
     get:
       summary: Get current reading of the counters for that token
       operationId: getCurrentReading
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -102,25 +121,25 @@ paths:
           required: false
           type: string
       responses:
-        200:
-          description: OK, counter read
+        '200':
+          description: 'OK, counter read'
           schema:
-            $ref: "#/definitions/Counters"
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+            $ref: '#/definitions/Counters'
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/next:
     get:
       summary: Increment and get current reading of that counter
       operationId: nextNumber
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -130,31 +149,39 @@ paths:
           required: true
         - name: name
           in: query
-          description: Optionally the name of the requested counter, mandatory for grouptokens
+          description: >-
+            Optionally the name of the requested counter, mandatory for
+            grouptokens
           required: false
           type: string
+        - name: increment
+          in: query
+          description: 'Value to add to the current counter''s value, default is 1'
+          required: false
+          type: integer
+          format: int64
       responses:
-        200:
-          description: OK, counter incremented
+        '200':
+          description: 'OK, counter incremented'
           schema:
-            $ref: "#/definitions/Counter"
-        400:
+            $ref: '#/definitions/Counter'
+        '400':
           description: Got grouptoken without specified name
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/previous:
     get:
       summary: Decrement and get current reading of that counter
       operationId: previousNumber
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -164,31 +191,39 @@ paths:
           required: true
         - name: name
           in: query
-          description: Optionally the name of the requested counter, mandatory for grouptokens
+          description: >-
+            Optionally the name of the requested counter, mandatory for
+            grouptokens
           required: false
           type: string
+        - name: decrement
+          in: query
+          description: 'Value to substract from the counter''s current value, default is 1'
+          required: false
+          type: integer
+          format: int64
       responses:
-        200:
-          description: OK, counter decremented
+        '200':
+          description: 'OK, counter decremented'
           schema:
-            $ref: "#/definitions/Counter"
-        400:
+            $ref: '#/definitions/Counter'
+        '400':
           description: Got grouptoken without specified name
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/reset:
     get:
-      summary: Reset that counter to 1
+      summary: Reset that counter
       operationId: resetCounter
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -198,31 +233,39 @@ paths:
           required: true
         - name: name
           in: query
-          description: Optionally the name of the requested counter, mandatory for grouptokens
+          description: >-
+            Optionally the name of the requested counter, mandatory for
+            grouptokens
           required: false
           type: string
+        - name: initialvalue
+          in: query
+          description: 'New value for the counter, default is 1'
+          required: false
+          type: integer
+          format: int64
       responses:
-        200:
-          description: OK, counter reset
+        '200':
+          description: 'OK, counter reset'
           schema:
-            $ref: "#/definitions/Counter"
-        400:
+            $ref: '#/definitions/Counter'
+        '400':
           description: Got grouptoken without specified name
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/delete:
     get:
       summary: Delete that counter without a trace
       operationId: deleteCounter
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
       parameters:
         - in: query
@@ -232,56 +275,70 @@ paths:
           required: true
         - name: name
           in: query
-          description: Optionally the name of the requested counter, mandatory for grouptokens
+          description: >-
+            Optionally the name of the requested counter, mandatory for
+            grouptokens
           required: false
           type: string
       responses:
-        200:
-          description: OK, counter deleted
+        '200':
+          description: 'OK, counter deleted'
           schema:
-            $ref: "#/definitions/Counter"
-        400:
+            $ref: '#/definitions/Counter'
+        '400':
           description: Got grouptoken without specified name
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
+            $ref: '#/definitions/Error'
   /counter/readonly:
     get:
       summary: Request read-only access token for that token
       operationId: getReadOnlyToken
-      tags: 
+      tags:
         - counter
-      produces: 
+      produces:
         - application/json
-      parameters: 
+      parameters:
         - in: query
           name: token
           type: string
           description: Your access token
           required: true
       responses:
-        200:
-          description: OK, read-only token created
+        '200':
+          description: 'OK, read-only token created'
           schema:
-            $ref: "#/definitions/Token"
-        403:
-          description: Forbidden, action not allowed with that token
-        404:
-          description: Not Found, unknown token
+            $ref: '#/definitions/Token'
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
         default:
           description: unexpected error
           schema:
-            $ref: "#/definitions/Error"
-securityDefinitions:
-  APIKeyHeader:
-    type: apiKey
-    in: header
-    name: token
+            $ref: '#/definitions/Error'
+  /stats/counters:
+    get:
+      summary: Request the number of currently open counters on that countmatic backend
+      operationId: getNumberOfCounters
+      tags:
+        - stats
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'OK, number of counters returned'
+          schema:
+            $ref: '#/definitions/Counter'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Token:
     properties:
@@ -297,7 +354,7 @@ definitions:
   Counters:
     type: array
     items:
-      $ref: "#/definitions/Counter"
+      $ref: '#/definitions/Counter'
   Error:
     properties:
       code:
@@ -306,5 +363,5 @@ definitions:
       message:
         type: string
 externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
