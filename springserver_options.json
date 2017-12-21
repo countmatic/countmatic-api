@@ -1,0 +1,15 @@
+{
+"basePackage":"io.countmatic.api",
+"configPackage":"io.countmatic.api.spring.config",
+"apiPackage":"io.countmatic.api.spring.server",
+"modelPackage":"io.countmatic.api.spring.model",
+"groupId":"io.countmatic.api",
+"artifactId":"springserver",
+"developerName":"Rainer Feike",
+"developerOrganization":"proxiss GmbH",
+"developerOrganizationUrl":"https://countmatic.io",
+"licenseName":"Apache 2.0",
+"java8":true,
+"title":"countmatic springserver",
+"interfaceOnly":"true"
+}
