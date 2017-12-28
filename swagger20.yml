@@ -6,7 +6,7 @@ info:
     There are numerous use cases where you need distributed enumerators in IoT
     manufacturing or i.e. production reporting.    Find out more
     [https://countmatic.io](https://countmatic.io).
-  version: 1.1.2
+  version: 2.0.1
   title: countmatic api
   termsOfService: 'https://countmatic.io#terms'
   contact:
@@ -15,7 +15,7 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: api.countmatic.io
-basePath: /v1
+basePath: /v2
 tags:
   - name: counter
     description: Everything about your counters
@@ -93,6 +93,38 @@ paths:
           description: 'OK, counter created and added to token'
           schema:
             $ref: '#/definitions/Counter'
+        '403':
+          description: 'Forbidden, action not allowed with that token'
+        '404':
+          description: 'Not Found, unknown token'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /counter/history:
+    get:
+      summary: Get the history of readings of a counter in descending order
+      operationId: getCounterHistory
+      tags:
+        - counter
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: token
+          type: string
+          description: Your access token
+          required: true
+        - name: name
+          in: query
+          description: The name of the requested counter
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'OK, counter read'
+          schema:
+            $ref: '#/definitions/CounterHistory'
         '403':
           description: 'Forbidden, action not allowed with that token'
         '404':
@@ -339,6 +371,23 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Error'
+  /stats/serverinfo:
+    get:
+      summary: Request information about the cm backend and its load
+      operationId: getServerInfo
+      tags:
+        - stats
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/ServerInfo'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Token:
     properties:
@@ -355,6 +404,53 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Counter'
+  TimedCounter:
+    properties:
+      datetime: 
+        type: string
+      count:
+        type: integer
+        format: int64
+  CounterHistory:
+    properties:
+      name:
+        type: string
+      counts:
+        type: array
+        items:
+          $ref: '#/definitions/TimedCounter'
+  ServerInfo:
+    properties:
+      server:
+        type: string
+        description: the server software running at the backend
+      persistentBackend:
+        type: string
+        description: the software used for persistent data
+      volatileBackend:
+        type: string
+        description: the software used to keep volatile data
+      apiVersion:
+        type: string
+        description: the countmatic API version of this server
+      maxNamesPerToken:
+        type: integer
+        format: int64
+        description: maximum number of counters in a grouptoken
+      capacityLoad:
+        type: integer
+        description: capacity load of the server at a scale of 0-100
+      runtimeLoad:
+        type: integer
+        description: performance load of the server at a scale of 0-100
+      currentCounters:
+        type: integer
+        format: int64
+        description: number of active counters in that server
+      maxCounters:
+        type: integer
+        format: int64
+        description: limit of active counters that server can manage (or 0 for unlimited)
   Error:
     properties:
       code:
@@ -365,3 +461,4 @@ definitions:
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
+
