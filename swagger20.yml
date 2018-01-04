@@ -6,7 +6,7 @@ info:
     There are numerous use cases where you need distributed enumerators in IoT
     manufacturing or i.e. production reporting.    Find out more
     [https://countmatic.io](https://countmatic.io).
-  version: 2.0.1
+  version: 2.0.2
   title: countmatic api
   termsOfService: 'https://countmatic.io#terms'
   contact:
@@ -22,8 +22,6 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://countmatic.io'
-  - name: group
-    description: About groups of counters
   - name: stats
     description: Statistics on counters
 schemes:
@@ -93,38 +91,6 @@ paths:
           description: 'OK, counter created and added to token'
           schema:
             $ref: '#/definitions/Counter'
-        '403':
-          description: 'Forbidden, action not allowed with that token'
-        '404':
-          description: 'Not Found, unknown token'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /counter/history:
-    get:
-      summary: Get the history of readings of a counter in descending order
-      operationId: getCounterHistory
-      tags:
-        - counter
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: token
-          type: string
-          description: Your access token
-          required: true
-        - name: name
-          in: query
-          description: The name of the requested counter
-          required: true
-          type: string
-      responses:
-        '200':
-          description: 'OK, counter read'
-          schema:
-            $ref: '#/definitions/CounterHistory'
         '403':
           description: 'Forbidden, action not allowed with that token'
         '404':
@@ -390,36 +356,31 @@ paths:
             $ref: '#/definitions/Error'
 definitions:
   Token:
+    description: an access token for that API
     properties:
       token:
         type: string
   Counter:
+    description: a single counter with name, reading and modification timestamp
     properties:
       name:
         type: string
+        description: the name of this counter
       count:
         type: integer
         format: int64
+        description: the current reading
+      modified:
+        type: integer
+        format: int64
+        description: the last write access as unix UTC timestamp
   Counters:
     type: array
+    description: an array of counters
     items:
       $ref: '#/definitions/Counter'
-  TimedCounter:
-    properties:
-      datetime: 
-        type: string
-      count:
-        type: integer
-        format: int64
-  CounterHistory:
-    properties:
-      name:
-        type: string
-      counts:
-        type: array
-        items:
-          $ref: '#/definitions/TimedCounter'
   ServerInfo:
+    description: some server information
     properties:
       server:
         type: string
@@ -461,4 +422,5 @@ definitions:
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
+
 
