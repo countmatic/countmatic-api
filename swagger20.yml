@@ -6,7 +6,7 @@ info:
     There are numerous use cases where you need distributed enumerators in IoT
     manufacturing or i.e. production reporting.    Find out more
     [https://countmatic.io](https://countmatic.io).
-  version: 1.1.2
+  version: 2.0.2
   title: countmatic api
   termsOfService: 'https://countmatic.io#terms'
   contact:
@@ -15,15 +15,13 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: api.countmatic.io
-basePath: /v1
+basePath: /v2
 tags:
   - name: counter
     description: Everything about your counters
     externalDocs:
       description: Find out more
       url: 'http://countmatic.io'
-  - name: group
-    description: About groups of counters
   - name: stats
     description: Statistics on counters
 schemes:
@@ -57,6 +55,8 @@ paths:
           description: 'OK, counter created'
           schema:
             $ref: '#/definitions/Token'
+        '409':
+          description: 'Conflict, name may not start with double underscore'
         default:
           description: unexpected error
           schema:
@@ -97,6 +97,8 @@ paths:
           description: 'Forbidden, action not allowed with that token'
         '404':
           description: 'Not Found, unknown token'
+        '409':
+          description: 'Conflict, name may not start with double underscore'
         default:
           description: unexpected error
           schema:
@@ -339,22 +341,81 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Error'
+  /stats/serverinfo:
+    get:
+      summary: Request information about the cm backend and its load
+      operationId: getServerInfo
+      tags:
+        - stats
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ServerInfo'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Token:
+    description: an access token for that API
     properties:
       token:
         type: string
   Counter:
+    description: 'a single counter with name, reading and modification timestamp'
     properties:
       name:
         type: string
+        description: the name of this counter
       count:
         type: integer
         format: int64
+        description: the current reading
+      modified:
+        type: integer
+        format: int64
+        description: the last write access as unix UTC timestamp
   Counters:
     type: array
+    description: an array of counters
     items:
       $ref: '#/definitions/Counter'
+  ServerInfo:
+    description: some server information
+    properties:
+      server:
+        type: string
+        description: the server software running at the backend
+      persistentBackend:
+        type: string
+        description: the software used for persistent data
+      volatileBackend:
+        type: string
+        description: the software used to keep volatile data
+      apiVersion:
+        type: string
+        description: the countmatic API version of this server
+      maxNamesPerToken:
+        type: integer
+        format: int64
+        description: maximum number of counters in a grouptoken
+      capacityLoad:
+        type: integer
+        description: capacity load of the server at a scale of 0-100
+      runtimeLoad:
+        type: integer
+        description: performance load of the server at a scale of 0-100
+      currentCounters:
+        type: integer
+        format: int64
+        description: number of active counters in that server
+      maxCounters:
+        type: integer
+        format: int64
+        description: limit of active counters that server can manage (or 0 for unlimited)
   Error:
     properties:
       code:

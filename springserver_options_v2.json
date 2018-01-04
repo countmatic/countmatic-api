@@ -1,0 +1,16 @@
+{
+"artifactVersion":"2.0.2",
+"basePackage":"io.countmatic.api_v2",
+"configPackage":"io.countmatic.api_v2.spring.config",
+"apiPackage":"io.countmatic.api_v2.spring.server",
+"modelPackage":"io.countmatic.api_v2.spring.model",
+"groupId":"io.countmatic.api",
+"artifactId":"cm-springserver-v2",
+"developerName":"Rainer Feike",
+"developerOrganization":"proxiss GmbH",
+"developerOrganizationUrl":"https://countmatic.io",
+"licenseName":"MIT",
+"java8":true,
+"title":"countmatic springserver",
+"interfaceOnly":"true"
+}
