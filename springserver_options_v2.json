@@ -1,5 +1,5 @@
 {
-"artifactVersion":"2.0.1",
+"artifactVersion":"2.0.2",
 "basePackage":"io.countmatic.api_v2",
 "configPackage":"io.countmatic.api_v2.spring.config",
 "apiPackage":"io.countmatic.api_v2.spring.server",
