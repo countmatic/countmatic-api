@@ -55,6 +55,8 @@ paths:
           description: 'OK, counter created'
           schema:
             $ref: '#/definitions/Token'
+        '409':
+          description: 'Conflict, name may not start with double underscore'
         default:
           description: unexpected error
           schema:
@@ -95,6 +97,8 @@ paths:
           description: 'Forbidden, action not allowed with that token'
         '404':
           description: 'Not Found, unknown token'
+        '409':
+          description: 'Conflict, name may not start with double underscore'
         default:
           description: unexpected error
           schema:
@@ -347,7 +351,7 @@ paths:
         - application/json
       responses:
         '200':
-          description: 'OK'
+          description: OK
           schema:
             $ref: '#/definitions/ServerInfo'
         default:
@@ -361,7 +365,7 @@ definitions:
       token:
         type: string
   Counter:
-    description: a single counter with name, reading and modification timestamp
+    description: 'a single counter with name, reading and modification timestamp'
     properties:
       name:
         type: string
@@ -422,5 +426,3 @@ definitions:
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
-
-
