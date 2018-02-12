@@ -1,0 +1,21 @@
+{
+"modelPackage": "io.countmatic.api_v2.model",
+"apiPackage": "io.countmatic.api_v2",
+"invokerPackage": "io.countmatic.api_v2",
+"groupId": "io.countmatic.api",
+"artifactId": "cm-java7client-v2",
+"artifactVersion": "2.0.1",
+"artifactUrl": "https://countmatic.io",
+"artifactDescription": "A java 7 client for the countmatic service",
+"scmConnection": "",
+"scmDeveloperConnection": "",
+"scmUrl": "",
+"developerName":"Rainer Feike",
+"developerOrganization":"Feike",
+"developerEmail": "apiteam@countmatic.io",
+"developerOrganizationUrl":"https://www.feike.de",
+"licenseName":"MIT",
+"licenseUrl": "https://opensource.org/licenses/MIT",
+"java8": "false",
+"library": "okhttp-gson"
+}
