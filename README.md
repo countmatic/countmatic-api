@@ -147,4 +147,7 @@ Testing countmatic.io
 
 ```
 
+Now, you can also use our angular frontend to view the current readings:
+https://countmatic.io/online-reader?token=5c02c4fd-32e7-4b8a-af12-2c0c5b8e0974-ro
+
 
